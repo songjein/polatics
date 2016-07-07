@@ -1,15 +1,27 @@
 <h1>지켜야할 것들</h1>
 <h5 style="color:gray">더 나아지기 위해서 지켜야할 덕목이나, 개인적인 계획들을 기록하고 날마다 달성 여부를 체크합니다.</h5>
 <%= link_to '목표를 생성합니다', new_goal_path %>
-<ol>
-<% @goals.each do |goal| %>
-<li>
-	<%= goal.title %>
-	<%# link_to 'Edit', edit_goal_path(goal) %>
-	<%# link_to 'Destroy', goal_path(goal), method: :delete, data: {confirm: '진짜 삭제??'} %>
-	<%= link_to '체크', "#"%>
-</li>
-<% end %>
-</ol>
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th>목표명</th>
+			<th>오늘 달성 여부</th>
+		</tr>
+	</thead>
+	<tbody>
+	<% @goals.each do |goal| %>
+	<tr>
+		<td>
+			<%= goal.title %>
+			<%# link_to 'Edit', edit_goal_path(goal) %>
+			<%# link_to 'Destroy', goal_path(goal), method: :delete, data: {confirm: '진짜 삭제??'} %>
+		</td>
+		<td>
+			<%= link_to '체크', "#"%>
+		</td>
+	</tr>
+	<% end %>
+	</tbody>
+</table>
 
 <%= link_to '메인화면으로 돌아갑니다', articles_path %>

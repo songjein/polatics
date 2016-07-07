@@ -7,21 +7,22 @@
 	또한<span style="color:red"> 누구나 서비스 개선<span style="color:black">(Ruby on Rails구현)</span>에 참여</span>할 수 있습니다(010-4849-7320) <a target="_blank" href="https://github.com/songjein/stdio">Github 바로가기</a>
 </p>
 
-<hr>
-<h3>Menu<span style="color:gray">(아이콘과 함께 오른쪽 슬라이드 탭으로 옮길 예정)</span></h3>
+<div class="divider"></div>
+<h3>Funtions</h3>
 <ul>
-	<li>글쓰기: <%= link_to '코드', new_article_path %>, 
-							<%= link_to '이론', new_article_path %>,
-							<%= link_to '독서', new_article_path %>,
-							<%= link_to '기사(링크)', new_article_path %>,
-							<%= link_to '아이디어', new_article_path %></li>
+	<li>글쓰기 
+			:	<%= link_to '코드', new_article_path%>
+			/	<%= link_to '책내용', new_article_path%>
+			/	<%= link_to '링크', new_article_path%>
+			/	<%= link_to '기타', new_article_path%>
+	</li>
 	<li><%= link_to '목표 (To do list)', goals_path %></li> 
 	<li><%= link_to '통계 (Statistics)', "#" %><span style="font-size:0.8em; color:gray;">(목표 달성 정도 및 개인 데이터 분석)</span></li>
 </ul>
 <br>
 
-<hr>
-<h3>Articles</h3>
+<div class="divider"></div>
+<h3>Recent Articles</h3>
 <ol>
 <% @articles.each do |article| %>
 	<li>
@@ -32,3 +33,17 @@
 <% end %>
 </ol>
 
+<div class="divider"></div>
+<h3>Topics</h3>
+<div>
+	<span style="color:red; font-size: 2em;">딥러닝</span>	
+	<span style="color:green; font-size: 1.5em;">알고리즘</span>	
+	<span style="color:blue; font-size: 1.2em;">Docker</span>	
+	<span style="color:orange; font-size: 2em;">Rails</span>	
+	<span style="color:purple; font-size: 1.8em;">테스트</span>	
+	<span style="color:green; font-size: 1.5em;">알고리즘</span>	
+	<span style="color:orange; font-size: 2em;">Rails</span>	
+	<span style="color:red; font-size: 2em;">딥러닝</span>	
+	<span style="color:purple; font-size: 1.8em;">테스트</span>	
+	<span style="color:blue; font-size: 1.2em;">Docker</span>	
+</div>

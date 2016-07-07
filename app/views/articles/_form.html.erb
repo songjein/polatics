@@ -1,3 +1,9 @@
+<style>
+	.emotion {
+		width:50px;	
+		height:50px;
+	}
+</style>
 <%= form_for @article do |f| %>
 	<% if @article.errors.any? %>
 		<div id="error_exaplanation">
@@ -23,6 +29,11 @@
 		<%= f.text_area :text%>
 	</p>
 
+	<%= image_tag 'happy.png', class: 'emotion' %>
+	<%= image_tag 'soso.png', class: 'emotion' %>
+	<%= image_tag 'sad.png', class: 'emotion' %>
+	<%= image_tag 'angry.png', class: 'emotion' %>
+	<%= image_tag 'hard.png', class: 'emotion' %>
 	<p>
 	 개선사항)글쓰기 타입이 코드라면, 언어 선택 메뉴 표시
 	</p>

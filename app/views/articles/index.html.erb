@@ -2,7 +2,7 @@
 <p style="color:gray; font-size:0.8em;">
 	<strong style="color:black">더 나은 프로그래머가 되기 위해서</strong>, 배운 것, 깨달은 것들을 나누는 곳입니다. <br>
 	딥러닝(Tensorflow, RNN), 데이터과학, 알고리즘, Docker, Rails 등에 관심이 있으며,<br>
-	다른 주제에 대해서도 환영입니다. 
+	다른 주제(정치, 독서)에 대해서도 환영입니다. 
 	누구나 자유롭게 이용 가능하며, 현재 사이트 구축 중입니다.<br>
 	또한<span style="color:red"> 누구나 서비스 개선<span style="color:black">(Ruby on Rails구현)</span>에 참여</span>할 수 있습니다(010-4849-7320) <a target="_blank" href="https://github.com/songjein/stdio">Github 바로가기</a>
 </p>
@@ -21,18 +21,10 @@
 <ol>
 <% @articles.each do |article| %>
 	<li>
-		<%= article.title %>
-		<%= link_to '조회', article_path(article) %>
+		<%= link_to article.title, article_path(article) %>
 		<%# link_to '수정', edit_article_path(article) %>
 		<%# link_to '삭제', article_path(article), method: :delete, data: {confirm: 'Are you sure?'} %>
 	</li>
 <% end %>
 </ol>
 
-
-<br>
-<h3>Projects</h3>
-<ul>
-	<li><%= link_to 'archifeeld.net', "http://archifeeld.net"%></li>
-	<li><%= link_to 'nstalk.xyz', "http://nstalk.xyz"%></li>
-</ul>

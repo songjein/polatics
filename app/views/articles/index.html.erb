@@ -10,7 +10,11 @@
 <hr>
 <h3>Menu<span style="color:gray">(아이콘과 함께 오른쪽 슬라이드 탭으로 옮길 예정)</span></h3>
 <ul>
-	<li><%= link_to '글쓰기', new_article_path %></li>
+	<li>글쓰기: <%= link_to '코드', new_article_path %>, 
+							<%= link_to '이론', new_article_path %>,
+							<%= link_to '독서', new_article_path %>,
+							<%= link_to '기사(링크)', new_article_path %>,
+							<%= link_to '아이디어', new_article_path %></li>
 	<li><%= link_to '목표 (To do list)', goals_path %></li> 
 	<li><%= link_to '통계 (Statistics)', "#" %><span style="font-size:0.8em; color:gray;">(목표 달성 정도 및 개인 데이터 분석)</span></li>
 </ul>

@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  text: MyText
+  news_name: MyString
+  news_url: MyString
+  news_time: 2016-10-01 08:40:12
+  polarity: false
+
+two:
+  title: MyString
+  text: MyText
+  news_name: MyString
+  news_url: MyString
+  news_time: 2016-10-01 08:40:12
+  polarity: false

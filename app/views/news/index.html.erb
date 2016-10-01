@@ -1,0 +1,85 @@
+<style>
+	.title{
+		font-weight: 1.2em;	
+	}
+	.datetime{
+		color:gray;
+	}
+
+	.news-container{
+		margin-top: 5px;		
+	}
+
+	.newsname{
+		color: gray;
+		font-weight: bold;	
+	}
+
+	.selected{
+		background:yellow;
+	}
+
+</style>
+
+<div class="jumbotron">
+	<center>
+		<div class="container">
+			<span style="font-weight:bold;font-size:3.5em;">Polatics</span>
+			<br>
+			<span style="font-size:1.5em; color:rgb(170,170,170);">Politics + Polarity</span>
+			<br>
+			<span style="font-size:2em">좌우편향 신문기사에 대한 검색 서비스를 제공합니다</span>
+			<div style="margin-top: 50px"></div>
+			<form class="form-inline">
+				<div class="form-group" style="width:70%">
+					<input id="search_form" type="text" class="form-control input-lg" style="width:100%" placeholder="검색어를 입력하세요">
+				</div>
+				<button id="submit" type="submit" class="btn btn-default btn-lg">
+					검색
+				</button>
+			</form>
+		</div>
+	</center>
+</div>
+
+
+
+<div class="container">
+	
+	<div style="width:50%; float:left">
+		<% @lefts.each do |news| %>	
+			<div class="news-container">
+				<span class="title"><%= link_to news.title.html_safe, news.news_url %></span>
+				<span class="newsname">@<%= news.news_name%></span>
+				<!--<span class="datetime"><%=time_ago_in_words(news.news_time)%></span>-->
+				<br>
+			</div>
+		<% end %>
+	</div>
+
+	<div style="width:50%; float:left">
+		<% @rights.each do |news| %>	
+			<div class="news-container">
+				<span class="title"><%= link_to news.title.html_safe, news.news_url %></span>
+				<span class="newsname">@<%= news.news_name%></span>
+				<!--<span class="datetime"><%=time_ago_in_words(news.news_time)%></span>-->
+				<br>
+			</div>
+		<% end %>
+	</div>
+
+</div>
+
+<script>
+	$(function(){
+		$("#submit").click(function(){
+			search_term = $("#search_form").val()
+			$(".title").each(function(index){
+				$(this).html(
+						$(this).html()
+						.replace(search_term, "<span class='selected'>" + search_term +"</span>")
+				)
+			})
+		})				
+	})
+</script>

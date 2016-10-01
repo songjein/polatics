@@ -1,4 +1,6 @@
 class GoalsController < ApplicationController
+	http_basic_authenticate_with name: "swdm", password: "swdm2016", except: [:index, :show]
+
 	def index
 		@goals = Goal.all
 	end

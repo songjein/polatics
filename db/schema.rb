@@ -10,17 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160706152400) do
+ActiveRecord::Schema.define(version: 20161001084012) do
 
   create_table "articles", force: :cascade do |t|
     t.string   "title"
     t.text     "text"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "x"
+    t.integer  "y"
   end
 
   create_table "goals", force: :cascade do |t|
     t.string   "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "news", force: :cascade do |t|
+    t.string   "title"
+    t.text     "text"
+    t.string   "news_name"
+    t.string   "news_url"
+    t.datetime "news_time"
+    t.boolean  "polarity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -1,8 +1,7 @@
 <style>
 	.emotion {
 		width:50px;	
-		height:50px;	
-		background: rgba(250,250,250,0.3);
+		height:50px;
 	}
 </style>
 <%= form_for @article do |f| %>
@@ -21,31 +20,20 @@
 	<% end %>
 
 	<div class="form-group">
-		<%= f.label :제목, class: 'form-label' %></br>
+		<%= f.label :title, class: 'form-label' %>
 		<%= f.text_field :title, class: 'form-input' %>
 	</div>
-
+	<br>
 	<div class="form-group">
-		<%= f.label :내용, class: 'form-label' %></br>
+		<%= f.label :text, class: 'form-label' %>
 		<%= f.text_area :text, class: 'form-input'%>
 	</div>
-	
-	<figure class="avatar avatar-xl">
-		<%= image_tag 'happy.png', class: 'emotion' %>
-	</figure>
-	<figure class="avatar avatar-xl">
-		<%= image_tag 'soso.png', class: 'emotion' %>
-	</figure>
-	<figure class="avatar avatar-xl">
-		<%= image_tag 'sad.png', class: 'emotion' %>
-	</figure>
-	<figure class="avatar avatar-xl">
-		<%= image_tag 'angry.png', class: 'emotion' %>
-	</figure>
-	<figure class="avatar avatar-xl">
-		<%= image_tag 'hard.png', class: 'emotion' %>
-	</figure>
 
+	<%= image_tag 'happy.png', class: 'emotion' %>
+	<%= image_tag 'soso.png', class: 'emotion' %>
+	<%= image_tag 'sad.png', class: 'emotion' %>
+	<%= image_tag 'angry.png', class: 'emotion' %>
+	<%= image_tag 'hard.png', class: 'emotion' %>
 	<p>
 	 개선사항)글쓰기 타입이 코드라면, 언어 선택 메뉴 표시
 	</p>
@@ -55,13 +43,6 @@
 	</p>
 
 	<p>
-	 개선사항)감정 3~5가지 선택(옵션- default: soso)
-	</p>
-
-	<p>
 		<%= f.submit class: 'btn btn-block' %>
-		<div class="loading"></div>
 	</p>
 <% end %>
-
-

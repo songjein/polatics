@@ -3,7 +3,7 @@
 		font-weight: 1.2em;	
 	}
 	.datetime{
-		color:gray;
+		color:rgb(170,170,170);
 	}
 
 	.news-container{
@@ -11,7 +11,7 @@
 	}
 
 	.newsname{
-		color: gray;
+		color: rgb(150,150,150);
 		font-weight: bold;	
 	}
 
@@ -19,25 +19,33 @@
 		background:yellow;
 	}
 
+	#title{
+		color: black;	
+	}
+
 </style>
 
+<!--<div class="jumbotron" style="background-image: url(<%= image_path 'bg.jpg' %>); background-size: 100% 100%;">-->
 <div class="jumbotron">
 	<center>
-		<div class="container">
-			<span style="font-weight:bold;font-size:3.5em;">Polatics</span>
+		<div class="container" >
+			<a id="title" href="/news"><span style="font-weight:bold;font-size:3.5em;">Polatics</span></a>
 			<br>
-			<span style="font-size:1.5em; color:rgb(170,170,170);">Politics + Polarity</span>
-			<br>
-			<span style="font-size:2em">좌우편향 신문기사에 대한 검색 서비스를 제공합니다</span>
+			<span style="font-size:1.5em">진보, 보수 신문기사에 대한 검색 서비스를 제공합니다</span>
+
 			<div style="margin-top: 50px"></div>
-			<form class="form-inline">
+
+			<div class="form-inline">
 				<div class="form-group" style="width:70%">
-					<input id="search_form" type="text" class="form-control input-lg" style="width:100%" placeholder="검색어를 입력하세요">
+					<input id="search_form" type="text" class="form-control input-lg" style="width:100%" placeholder="검색어를 입력하세요" value="<%=@search_term%>">
 				</div>
-				<button id="submit" type="submit" class="btn btn-default btn-lg">
-					검색
-				</button>
-			</form>
+				<%= link_to "검색", "#", class: "btn btn-default btn-lg", id:"search_submit" %>
+			</div>
+
+			<script>
+			
+			</script>
+
 		</div>
 	</center>
 </div>
@@ -47,22 +55,28 @@
 <div class="container">
 	
 	<div style="width:50%; float:left">
+		<% if @lefts.length == 0 %>
+			- 진보 신문의 검색 결과가 없습니다 -
+		<% end %>
 		<% @lefts.each do |news| %>	
 			<div class="news-container">
-				<span class="title"><%= link_to news.title.html_safe, news.news_url %></span>
+				<span class="title"><%= link_to news.title.html_safe, news.news_url, target: "_blank" %></span>
 				<span class="newsname">@<%= news.news_name%></span>
-				<!--<span class="datetime"><%=time_ago_in_words(news.news_time)%></span>-->
+				<span class="datetime"><%=time_ago_in_words(news.news_time)%> 전</span>
 				<br>
 			</div>
 		<% end %>
 	</div>
 
 	<div style="width:50%; float:left">
+		<% if @rights.length == 0 %>
+			- 보수 신문의 검색 결과가 없습니다 -
+		<% end %>
 		<% @rights.each do |news| %>	
 			<div class="news-container">
-				<span class="title"><%= link_to news.title.html_safe, news.news_url %></span>
+				<span class="title"><%= link_to news.title.html_safe, news.news_url, target: "_blank" %></span>
 				<span class="newsname">@<%= news.news_name%></span>
-				<!--<span class="datetime"><%=time_ago_in_words(news.news_time)%></span>-->
+				<span class="datetime"><%=time_ago_in_words(news.news_time)%> 전</span>
 				<br>
 			</div>
 		<% end %>
@@ -72,7 +86,8 @@
 
 <script>
 	$(function(){
-		$("#submit").click(function(){
+		// 나중에 하이라이트 펑션에 쓸 함수
+		$("#").click(function(){
 			search_term = $("#search_form").val()
 			$(".title").each(function(index){
 				$(this).html(
@@ -80,6 +95,31 @@
 						.replace(search_term, "<span class='selected'>" + search_term +"</span>")
 				)
 			})
+			return false;
 		})				
+
+		$('#search_submit').click(function(){
+			return false;
+		})
+
+		<%# search term highlight %>
+		<%# search term highlight %>
+		<% if @search_term %>
+			search_term = $("#search_form").val()
+			$(".title").each(function(index){
+				$(this).html(
+						$(this).html()
+						.replace(search_term, "<span class='selected'>" + search_term +"</span>")
+				)
+			})
+		<% end %>
+
+		// 엔터 이벤트
+		$('#search_form').keyup(function(e) {
+			if (e.keyCode == 13) {
+				window.location = '/news?search_term=' + $("#search_form").val();
+			} 
+		});
+
 	})
 </script>

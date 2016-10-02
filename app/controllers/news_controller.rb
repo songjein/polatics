@@ -2,6 +2,9 @@ class NewsController < ApplicationController
 	def index
 		# 좌/ 우파 신문
 		@search_term = ""
+		if params
+			@search_term = params["search_term"]
+		end
 		@lefts = New.where(polarity: true)
 			.where("news.title LIKE ?", "%#{@search_term}%").order(news_time: :desc)
 		@rights = New.where(polarity: false)
@@ -23,11 +26,18 @@ class NewsController < ApplicationController
 		]
 		# http://wolfapple.tumblr.com/post/30861736496/open-uri-%EC%82%AC%EC%9A%A9%EC%8B%9C-%ED%95%9C%EA%B8%80%EC%9D%B4-%EA%B9%A8%EC%A7%88%EB%95%8C
 		# 한글 깨질 때
+		
+		c = 0
+		ret = ""
 		(1..10).each do |i|
 			doc = Nokogiri::HTML(open(base_url + "/svc/list_in/list.html?catid=2&pn=" + i.to_s, 'r:binary').read.encode('utf-8', 'euc-kr'))
 			links = doc.search(".list_item dt a")
 
 			links.each do |link|
+				if New.where(title: link.inner_html).length == 1
+					ret += link.inner_html
+					break;
+				end
 				paper = New.new
 				paper.title = link.inner_html 
 				paper.news_url = link["href"]
@@ -37,10 +47,11 @@ class NewsController < ApplicationController
 				paper.news_time = Time.new(date_info[2].split(".")[0].to_i, date_info[2].split(".")[1].to_i, date_info[2].split(".")[2].to_i, date_info[3].split(":")[0], date_info[3].split(":")[1])
 				paper.polarity = false 
 				paper.save
+				c += 1
 			end
 		end
 
-		render text: "success"
+		render text: "success " + c.to_s + " " + ret
 
 	end
 
@@ -55,6 +66,8 @@ class NewsController < ApplicationController
 			'economy', 'politics' #...
 		]
 
+		c = 0
+		ret = ""
 		(1..10).each do |i|
 			doc = Nokogiri::HTML(open(base_url + "/arti/politics/list" + i.to_s +  ".html"))
 
@@ -62,6 +75,10 @@ class NewsController < ApplicationController
 			dates = doc.search(".date")
 
 			links.each_with_index  do |link, idx|
+				if New.where(title: link.inner_html).length == 1
+					ret += link.inner_html
+					break;
+				end
 				paper = New.new
 				paper.title = link.inner_html 
 				paper.news_url = base_url + link["href"]
@@ -70,18 +87,15 @@ class NewsController < ApplicationController
 				paper.news_time = Time.new(date_info[0].split("-")[0].to_i, date_info[0].split("-")[1].to_i, date_info[0].split("-")[2].to_i, date_info[1].split(":")[0], date_info[1].split(":")[1]) 
 				paper.polarity = true 
 				paper.save
+				c += 1
 			end
 		end
 
-		render text: "success"
+		render text: "success " + c.to_s + " " + ret
 
 	end
 
 	def crawl_jungang
-		news= New.where("news.news_url LIKE ?", "%joins%")
-		news.each do |n|
-			n.destroy
-		end
 
 		# 한겨례 
 		require 'nokogiri' 
@@ -93,6 +107,8 @@ class NewsController < ApplicationController
 			'economy', 'politics' #...
 		]
 
+		c = 0
+		ret = ""
 		(1..10).each do |i|
 			doc = Nokogiri::HTML(open(base_url + "/politics/assemgov/list/" + i.to_s))
 
@@ -100,6 +116,10 @@ class NewsController < ApplicationController
 			dates = doc.search(".byline em:nth-child(2)")
 
 			links.each_with_index  do |link, idx|
+				if New.where(title: link.inner_html).length == 1
+					ret += link.inner_html
+					break;
+				end
 				paper = New.new
 				paper.title = link.inner_html 
 				paper.news_url = base_url + link["href"]
@@ -108,10 +128,52 @@ class NewsController < ApplicationController
 				paper.news_time = Time.new(date_info[0].split(".")[0].to_i, date_info[0].split(".")[1].to_i, date_info[0].split(".")[2].to_i, date_info[1].split(":")[0], date_info[1].split(":")[1]) 
 				paper.polarity = false 
 				paper.save
+				c += 1
 			end
 		end
 
-		render text: "success"
+		render text: "success " + c.to_s + " " + ret
+
+	end
+
+
+	def crawl_pressian
+		# 한겨례 
+		require 'nokogiri' 
+		require 'open-uri'
+
+		base_url  = "http://www.pressian.com"
+
+		candidates = [
+			'economy', 'politics' #...
+		]
+
+		c = 0
+		ret = ""
+		(1..10).each do |i|
+			doc = Nokogiri::HTML(open(base_url + "/news/section_list_all.html?sec_no=66&page=" + i.to_s))
+
+			links = doc.search("a.tt")
+			dates = doc.search(".list_data")
+
+			links.each_with_index  do |link, idx|
+				if New.where(title: link.inner_html).length == 1
+					ret += link.inner_html
+					break;
+				end
+				paper = New.new
+				paper.title = link.inner_html 
+				paper.news_url = link["href"]
+				date_info = dates[idx].inner_html.strip.split(" ")
+				paper.news_name = "프레시안"
+				paper.news_time = Time.new(date_info[0].split(".")[0].to_i, date_info[0].split(".")[1].to_i, date_info[0].split(".")[2].to_i, date_info[1].split(":")[0], date_info[1].split(":")[1]) 
+				paper.polarity = true 
+				paper.save
+				c += 1
+			end
+		end
+
+		render text: "success " + c.to_s + " " + ret
 
 	end
 

@@ -7,6 +7,9 @@ Rails.application.routes.draw do
 	get '/crawl_hani' => "news#crawl_hani"
 	get '/crawl_jungang' => "news#crawl_jungang"
 	get '/crawl_pressian' => "news#crawl_pressian"
+	get '/all' => 'news#all'
+
+	get '/add_hot_topics' => 'news#add_hot_topics'
 
 	resources :articles
 

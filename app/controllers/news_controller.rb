@@ -6,13 +6,35 @@ class NewsController < ApplicationController
 			@search_term = params["search_term"]
 		end
 		@lefts = New.where(polarity: true)
-			.where("news.title LIKE ?", "%#{@search_term}%").order(news_time: :desc)
+			.where("news.title LIKE ?", "%#{@search_term}%")
+			.order(news_time: :desc)
 		@rights = New.where(polarity: false)
-			.where("news.title LIKE ?", "%#{@search_term}%").order(news_time: :desc)
+			.where("news.title LIKE ?", "%#{@search_term}%")
+			.order(news_time: :desc)
 	end
 
-	def search 
+	def all 
+		titles = "" 
+		news = New.all
+		news.each do |n|
+			titles += n.title + "\n"
+		end
+		render json: titles 
 	end
+	
+	# api for adding hot topics
+	# api for adding hot topics
+	def add_hot_topics
+		hot_topics = params["hot"].split(",")		
+		hot_topics.each do |h|
+			t = HotTopic.new
+			t.topic = h
+			t.save	
+		end
+		render text: hot_topics 
+	end
+	# api for adding hot topics
+	# api for adding hot topics
 
 	def crawl_chosun
 		# 조선일보

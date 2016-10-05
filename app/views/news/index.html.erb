@@ -29,14 +29,15 @@
 <div class="jumbotron">
 	<center>
 		<div class="container" >
-			<a id="title" href="/news"><span style="font-weight:bold;font-size:3.5em;">Polatics</span></a>
+			<% ca = ['#EDD200', 'green', 'navy', 'purple'] %>
+			<a id="title" href="/news"><span style="font-weight:bold;font-size:3.5em;color:<%=ca[rand(0..4)]%>">Polatics</span></a>
 			<br>
 			<span style="font-size:1.5em">진보, 보수 신문기사에 대한 검색 서비스를 제공합니다</span>
 
 			<div style="margin-top: 50px"></div>
 
 			<div class="form-inline">
-				<div class="form-group" style="width:70%">
+				<div class="form-group" style="width:50%">
 					<input id="search_form" type="text" class="form-control input-lg" style="width:100%" placeholder="검색어를 입력하세요" value="<%=@search_term%>">
 				</div>
 				<%= link_to "검색", "#", class: "btn btn-default btn-lg", id:"search_submit" %>
@@ -86,6 +87,7 @@
 
 <script>
 	$(function(){
+
 		// 나중에 하이라이트 펑션에 쓸 함수
 		$("#").click(function(){
 			search_term = $("#search_form").val()

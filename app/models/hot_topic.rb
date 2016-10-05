@@ -1,0 +1,2 @@
+class HotTopic < ApplicationRecord
+end

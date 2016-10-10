@@ -4,7 +4,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 import json
-import operator
+import operator 
 import urllib2
 
 
@@ -18,6 +18,7 @@ urllib2.urlopen("http://polatics.link:3000/crawl_chosun").read()
 urllib2.urlopen("http://polatics.link:3000/crawl_hani").read()
 urllib2.urlopen("http://polatics.link:3000/crawl_jungang").read()
 urllib2.urlopen("http://polatics.link:3000/crawl_pressian").read()
+urllib2.urlopen("http://polatics.link:3000/crawl_donga").read()
 
 #f = open("seoul_data2.txt", "r")
 #f = open("polatics.txt", "r")
@@ -48,7 +49,7 @@ voca =  sorted(voca.items(), key=operator.itemgetter(1), reverse=True)
 c = 0
 ret = []
 for k,v in voca:
-	if len(k) > 1:
+	if len(k) > 1 and k != "단독":
 		print k,v
 		ret.append(k)
 		c += 1 
@@ -56,4 +57,6 @@ for k,v in voca:
 
 hot_topics = ",".join(ret)
 
+
 print urllib2.urlopen("http://polatics.link:3000/add_hot_topics?hot=" + hot_topics).read()
+

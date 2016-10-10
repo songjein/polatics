@@ -1,4 +1,6 @@
 <style>
+	* { font-family: 'Spoqa Han Sans', serif; }
+
 	.title{
 		font-weight: 1.2em;	
 	}
@@ -23,6 +25,15 @@
 		color: black;	
 	}
 
+	#hot-topics{
+		width: 500px;
+	}
+
+	.hot-topic{
+		color: rgb(150,150,150);		
+		cursor: pointer;
+	}
+
 </style>
 
 <!--<div class="jumbotron" style="background-image: url(<%= image_path 'bg.jpg' %>); background-size: 100% 100%;">-->
@@ -32,9 +43,10 @@
 			<% ca = ['#EDD200', 'green', 'navy', 'purple'] %>
 			<a id="title" href="/news"><span style="font-weight:bold;font-size:3.5em;color:<%=ca[rand(0..4)]%>">Polatics</span></a>
 			<br>
-			<span style="font-size:1.5em">진보, 보수 신문기사에 대한 검색 서비스를 제공합니다</span>
+			<span style="font-size:1.2em;" ><strong>진보, 보수</strong> 신문기사에 대한 제목 검색이 가능합니다</span><br>
+			<span style="color:rgb(150,150,150)">- <span style="color:black"><%=time_ago_in_words(HotTopic.last.created_at)%></span> 전에 업데이트 됨 -</span>
 
-			<div style="margin-top: 50px"></div>
+			<div style="margin-top: 30px"></div>
 
 			<div class="form-inline">
 				<div class="form-group" style="width:50%">
@@ -43,9 +55,14 @@
 				<%= link_to "검색", "#", class: "btn btn-default btn-lg", id:"search_submit" %>
 			</div>
 
-			<script>
-			
-			</script>
+			<div style="margin-top: 30px"></div>
+
+			<div id="hot-topics">
+				핫토픽:
+				<% HotTopic.all.reverse[0..19].reverse.each do |h| %>
+					<span class="hot-topic"><%= h.topic%></span>&nbsp;
+				<% end %>
+			</div>
 
 		</div>
 	</center>
@@ -123,5 +140,8 @@
 			} 
 		});
 
+		$('.hot-topic').click(function(){
+				window.location = '/news?search_term=' + $(this).html() 
+		})
 	})
 </script>

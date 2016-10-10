@@ -14,16 +14,27 @@ from konlpy.tag import Twitter
 
 twitter = Twitter()
 
+urllib2.urlopen("http://polatics.link:3000/crawl_chosun").read()
+urllib2.urlopen("http://polatics.link:3000/crawl_hani").read()
+urllib2.urlopen("http://polatics.link:3000/crawl_jungang").read()
+urllib2.urlopen("http://polatics.link:3000/crawl_pressian").read()
 
 #f = open("seoul_data2.txt", "r")
-f = open("polatics.txt", "r")
+#f = open("polatics.txt", "r")
+# current 500 articles
+f = urllib2.urlopen("http://polatics.link:3000/all").read().split('\n')
+f.reverse()
+f = f[0:400]
+
+for i in f:
+	print i 
+
+print "line : %d" %(len(f))
 f2 = open("polatics_out.txt", "w")
 
 voca = {}
 
-while True:
-	line = f.readline()
-	if not line: break
+for line in f:
 	for i in twitter.nouns(line):
 		if i in voca:
 			voca[i] += 1
@@ -45,6 +56,4 @@ for k,v in voca:
 
 hot_topics = ",".join(ret)
 
-
 print urllib2.urlopen("http://polatics.link:3000/add_hot_topics?hot=" + hot_topics).read()
-

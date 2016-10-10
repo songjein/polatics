@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script  src="https://code.jquery.com/jquery-1.12.4.js" integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    
+		<style>
+			#search {
+			}
+
+			#search_input{
+				 position: relative;
+			}
+
+			#overlay{
+				 position: absolute;
+				 top: 0; left: 0;
+				 background: rgba(0,0,0,0.5);
+				 display: none;
+			}
+
+			#overlay input{
+				 font-size: 5em;
+				 width: 50%;
+			}
+
+			input[type="text"]{
+					background: transparent;
+					border: none;
+					color: white;
+					outline: none;
+			}
+
+			::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+					color:    white;
+			}
+
+			:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+				 color:    white;
+				 opacity:  1;
+			}
+
+			::-moz-placeholder { /* Mozilla Firefox 19+ */
+				 color:    white;
+				 opacity:  1;
+			}
+			:-ms-input-placeholder { /* Internet Explorer 10-11 */ 
+				color:    white;
+			}
+		</style>
+      
+    <script>
+				// global variable
+				// global variable
+				var map;
+				var circles = [];
+				// global variable
+				// global variable
+
+				function initMap() {
+				 var mapCanvas = document.getElementById("map");
+				 var mapOptions = {
+					 center:  new google.maps.LatLng(37.09024, -95.712891), 
+					 zoom: 4,
+					 minZoom: 4
+				 }
+
+				 map = new google.maps.Map(mapCanvas, mapOptions);
+
+				
+				}
+        $(function(){
+
+						// query make & send 
+						// query make & send 
+						function asterixQuery(keyword){
+							// 빈칸 필수
+							// ; 찍었다가 get의 파라미터 상에서 오류가나서.. 근데 post로 보내면 상관 없을 듯!
+							query = encodeURI(
+								"use dataverse twitter " + 
+								"for $t in dataset ds_tweets " +
+								"where contains($t.text_msg, \"" + keyword + "\" ) " +
+								"return $t; ")
+
+							// CORS 문제 때문에 proxy서버를 이용해야됨
+							// http://adrenal.tistory.com/16
+							proxy = "http://stdio.kr:3000/welcome/index?query=";
+
+							$.ajax({
+                dataType: 'json',
+                url: proxy + query,
+								beforeSend: function(){
+									//https://answers.squarespace.com/questions/139989/loading-gif-for-individual-images.html
+									$('#queryStatus').html("<center><img src='https://d13yacurqjgara.cloudfront.net/users/82092/screenshots/1073359/spinner.gif'></center>")	
+								},
+                success: function(data){
+									texts = "" 
+									locs = []  // locations
+									$.each(data, function(idx, obj){
+										//texts.push(obj["text_msg"])
+										_lat = (obj["place"]["bounding_box"][0][1] + obj["place"]["bounding_box"][1][1])/2
+										_lng= (obj["place"]["bounding_box"][0][0] + obj["place"]["bounding_box"][1][0])/2
+										texts += "<h5>" + (obj["text_msg"]) + "</h5>"
+										locs.push([parseFloat(_lat), parseFloat(_lng)])
+									})
+									$('#queryStatus').html("")
+									$('#queryResult').html(texts)
+
+									// Construct the circle for each value in citymap.
+									// Note: We scale the area of the circle based on the population.
+									for (var i in circles){
+										circles[i].setMap(null);
+									}
+	
+									for (var i in locs) {
+										// Add the circle for this city to the map.
+										var cityCircle = new google.maps.Circle({
+											strokeColor: '#FF0000',
+											strokeOpacity: 0.8,
+											fillColor: '#FF0000',
+											fillOpacity: 0.35,
+											map: map,
+											center: {lat: locs[i][0] , lng: locs[i][1]},
+											radius: 10000
+										});
+										circles.push(cityCircle)
+									}
+
+                }
+              })
+						}
+
+
+						// search nav item
+						// search nav item
+           $('#search').click(function(){
+              $('#overlay').css('width', $(window).width())
+                       .css('height', $(window).height())
+                       .show()
+              $('#overlay').click(function(){
+                 $(this).hide()
+              })
+              $('#search_input').focus()
+           })
+
+					// search input event
+					// search input event
+           $('#search_input').css('margin-top', $(window).height()/3).click(function(){
+              return false;
+
+           }).keyup(function(e){
+							if (e.keyCode == 13) {
+								asterixQuery($('#search_input').val());
+								$('#overlay').hide();
+								$('#queryResult').html("")
+							} 
+					 })
+
+						
+        
+        })
+    </script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Twitter Analyzer</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" id="search" >Search</a></li>
+            <li><a href="#" id="search" >Event</a></li>
+            <li><a href="#" id="search" >Sentiment</a></li>
+            <li><a href="#" id="search" >Trajectory</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <div id="map" style="width:100%;height:500px"></div>
+		<div id="queryStatus"></div>
+		<div id="queryResult"></div>
+
+    <script>
+				
+    </script>
+
+    <div id="overlay">
+      <center><input id="search_input" type="text" placeholder="Search..."></center>
+    </div>
+
+    <script>
+    /*
+      function initMap2222() {
+        var mapDiv = document.getElementById('map');
+        var map = new google.maps.Map(mapDiv, {
+            center: {lat: 41.950033, lng: -87.6500523},
+            zoom:4 
+        });
+      // Define a symbol using a predefined path (an arrow)
+			// supplied by the Google Maps JavaScript API.
+			var lineSymbol = {
+				path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+			};
+
+			// Create the polyline and add the symbol via the 'icons' property.
+			var line = new google.maps.Polyline({
+				path: [
+          { lng : -120.063829, lat : 36.963741 },
+          { lng : -97.455741, lat : 35.695222 },
+          { lng : -96.574593, lat : 39.209929 },
+          { lng : -97.552161, lat : 35.482844 },
+          { lng : -98.716992, lat : 35.309047 },
+          { lng : -96.053431, lat : 41.275721 },
+          { lng : -77.236969, lat : 38.805115 },
+				],
+				icons: [{
+					icon: lineSymbol,
+					offset: '100%'
+				}],
+				map: map
+			});
+      }
+      */
+    </script>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAt-GrMs3jH1JjJl9HomAoPmLVg1nK1zw0 &callback=initMap">
+    </script>
+  </body>
+</html>
+
+

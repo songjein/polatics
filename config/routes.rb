@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 	root 'news#index'
   get 'welcome/index'
+  get '/analyzer' => 'welcome#analyzer'
 
 	resources :news
 	get '/crawl_chosun' => "news#crawl_chosun"

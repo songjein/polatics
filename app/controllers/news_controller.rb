@@ -200,4 +200,65 @@ class NewsController < ApplicationController
 	end
 
 
+	def crawl_donga
+		# 한겨례 
+		require 'nokogiri' 
+		require 'open-uri'
+
+		base_url  = "http://news.donga.com"
+
+		candidates = [
+			'economy', 'politics' #...
+		]
+
+		c = 0
+		donga_i = 1
+		ret = ""
+		(1..10).each do |i|
+			if i != 1
+				# 동아일보가 독특한 규칙을 가지고 있음, 한페이지마다 16씩 증가
+				donga_i +=  16 
+			end
+			doc = Nokogiri::HTML(open(base_url + "/List/00?p=" + donga_i.to_s + "&ymd=&m=" ))
+
+			links = doc.search(".articleList .title a")
+			dates = doc.search(".articleList span")
+
+			links.each_with_index  do |link, idx|
+				# 이미 있는 것인지 체크
+				if New.where(title: link.inner_html).length == 1
+					ret += link.inner_html
+					break;
+				end
+
+				# 객체 생성
+				paper = New.new
+
+				# 제목 및 유알엘 
+				paper.title = link.inner_html 
+				paper.news_url = link["href"]
+				
+				# 날짜 계산
+				date_info = dates[idx].inner_html.split("[")[1].split("]")[0].split(" ")
+
+				# 신문 이름 및 성향 진보/보수(true/false)
+				paper.news_name = "동아일보"
+				paper.polarity = false  
+
+				# 날짜 계산
+				ymd = date_info[0].split("-")
+				time = date_info[1].split(":")
+				paper.news_time = Time.new(ymd[0], ymd[1], ymd[2], time[0], time[1]) 
+
+				paper.save
+				c += 1
+			end
+		end
+
+		render text: "success " + c.to_s + " " + ret
+
+	end
+
+
+
 end

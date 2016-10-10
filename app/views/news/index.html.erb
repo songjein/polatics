@@ -23,6 +23,7 @@
 
 	#title{
 		color: black;	
+		cursor:pointer;
 	}
 
 	#hot-topics{
@@ -34,17 +35,44 @@
 		cursor: pointer;
 	}
 
+	#overlay{
+		 position: absolute;
+		 top: 0; left: 0;
+		 background: rgba(0,0,0,0.5);
+		 display: none;
+	}
+
+	#info {
+		font-size: 1.5em;	
+		color : #99E000;
+		cursor: pointer;
+	}
+
+	#about-service{
+		font-size: 1.3em;
+		color:white;	
+		width: 600px;
+		margin: auto;
+		margin-top: 10%;
+	}
+
+
 </style>
 
 <!--<div class="jumbotron" style="background-image: url(<%= image_path 'bg.jpg' %>); background-size: 100% 100%;">-->
 <div class="jumbotron">
 	<center>
 		<div class="container" >
-			<% ca = ['#EDD200', 'green', 'navy', 'purple'] %>
-			<a id="title" href="/news"><span style="font-weight:bold;font-size:3.5em;color:<%=ca[rand(0..4)]%>">Polatics</span></a>
+			<%# ca = ['#EDD200', 'green', 'navy', 'purple'] %>
+			<%# ca[rand(0..4)]%>
+			<span id="title" style="font-weight:bold;font-size:3.5em;">Polatics</span>
+			<i id="info" class="fa fa-leaf" aria-hidden="true"></i>
 			<br>
-			<span style="font-size:1.2em;" ><strong>진보, 보수</strong> 신문기사에 대한 제목 검색이 가능합니다</span><br>
+			<span style="font-size:1.2em;" ><strong>진보, 보수</strong> 신문기사에 대한 제목 검색이 가능합니다</span>
+			<br>
 			<span style="color:rgb(150,150,150)">- <span style="color:black"><%=time_ago_in_words(HotTopic.last.created_at)%></span> 전에 업데이트 됨 -</span>
+			<br>
+			<a  href="/news">전체보기</a>
 
 			<div style="margin-top: 30px"></div>
 
@@ -52,7 +80,7 @@
 				<div class="form-group" style="width:50%">
 					<input id="search_form" type="text" class="form-control input-lg" style="width:100%" placeholder="검색어를 입력하세요" value="<%=@search_term%>">
 				</div>
-				<%= link_to "검색", "#", class: "btn btn-default btn-lg", id:"search_submit" %>
+				<button class="btn btn-default btn-lg" id="search_submit"><i class="fa fa-search" aria-hidden="true"></i></button>
 			</div>
 
 			<div style="margin-top: 30px"></div>
@@ -102,6 +130,24 @@
 
 </div>
 
+<div id="overlay">
+	<div id="about-service">
+			<i style="color:#E1FF36"class="fa fa-balance-scale" aria-hidden="true"></i> <strong>Polatics란?</strong> <br>
+			정치를 의미하는 <u>Politics</u>와 양극성을 의미하는 <u>Polarity</u>의 합성어 입니다.<br>
+			좀 더 균형잡힌 시각으로 세상의 소식을 접하기 위해 만들었습니다.<br>
+			서비스의 좌측에는 진보신문, 우측에는 보수신문기사를 배치하였으며<br>
+			주제어에 대한 검색이 가능합니다 <span style="color:yello">;D</span></br>
+			<br>
+			<div style="font-size: 0.7em;">
+			- 더 다양한 신문사, 검색 방식 및 분석 결과를 추가할 예정입니다 <br>
+			- 개발에 관심 있으시거나 배워보고 싶은 학생분들은 →<span style="color:orange">jeinsong200@gmail.com</span> 연락주세요<br>
+			- 파이썬(핫토픽), 루비(크롤링), 루비온레일즈(웹서비스) 및 웹언어(html,css,jquery)로 개발하고 있습니다
+			</div>
+	</div>
+</div>
+
+
+
 <script>
 	$(function(){
 
@@ -118,6 +164,7 @@
 		})				
 
 		$('#search_submit').click(function(){
+			window.location = '/news?search_term=' + $("#search_form").val();
 			return false;
 		})
 
@@ -143,5 +190,20 @@
 		$('.hot-topic').click(function(){
 				window.location = '/news?search_term=' + $(this).html() 
 		})
+
+
+		// search nav item
+		// search nav item
+		$('#info, #title').click(function(){
+			$('#overlay').css('width', $(window).width())
+							 .css('height', $(window).height())
+							 .show()
+		})
+		
+		$('#overlay').click(function(){
+			 $(this).hide()
+		})
+
+		
 	})
 </script>

@@ -33,6 +33,7 @@
 	.hot-topic{
 		color: rgb(150,150,150);		
 		cursor: pointer;
+		white-space: nowrap;
 	}
 
 	#overlay{
@@ -54,6 +55,8 @@
 		width: 600px;
 		margin: auto;
 		margin-top: 10%;
+		background: rgba(0,0,0,0.3);
+		padding: 1%;
 	}
 
 
@@ -136,7 +139,7 @@
 			정치를 의미하는 <u>Politics</u>와 양극성을 의미하는 <u>Polarity</u>의 합성어 입니다.<br>
 			좀 더 균형잡힌 시각으로 세상의 소식을 접하기 위해 만들었습니다.<br>
 			서비스의 좌측에는 진보신문, 우측에는 보수신문기사를 배치하였으며<br>
-			주제어에 대한 검색이 가능합니다 <span style="color:yello">;D</span></br>
+			주제어에 대한 검색이 가능합니다 <span style="color:yellow">;D</span></br>
 			<br>
 			<div style="font-size: 0.7em;">
 			- 더 다양한 신문사, 검색 방식 및 분석 결과를 추가할 예정입니다 <br>
@@ -202,6 +205,10 @@
 		
 		$('#overlay').click(function(){
 			 $(this).hide()
+		})
+
+		$('#about-service').click(function(){
+			return false;	
 		})
 
 		

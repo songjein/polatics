@@ -55,16 +55,42 @@
 				// global variable
 				var map;
 				var circles = [];
+				var traj_line ;
+				var mode = ""
 				// global variable
 				// global variable
 
+				
 				function initMap() {
-				 var mapCanvas = document.getElementById("map");
-				 var mapOptions = {
-					 center:  new google.maps.LatLng(37.09024, -95.712891), 
-					 zoom: 4,
-					 minZoom: 4
-				 }
+					var styleArray = [
+						{
+							featureType: 'all',
+							stylers: [
+								{ saturation: -80 }
+							]
+						},{
+							featureType: 'road.arterial',
+							elementType: 'geometry',
+							stylers: [
+								{ hue: '#00ffee' },
+								{ saturation: 50 }
+							]
+						},{
+							featureType: 'poi.business',
+							elementType: 'labels',
+							stylers: [
+								{ visibility: 'off' }
+							]
+						}
+					];
+
+					var mapCanvas = document.getElementById("map");
+					var mapOptions = {
+					  center:  new google.maps.LatLng(37.09024, -95.712891), 
+					  zoom: 4,
+					  minZoom: 4,
+					  styles: styleArray
+					}
 
 				 map = new google.maps.Map(mapCanvas, mapOptions);
 
@@ -72,11 +98,12 @@
 				}
         $(function(){
 
-						// query make & send 
-						// query make & send 
-						function asterixQuery(keyword){
-							// 빈칸 필수
-							// ; 찍었다가 get의 파라미터 상에서 오류가나서.. 근데 post로 보내면 상관 없을 듯!
+					// query make & send 
+					// query make & send 
+					function asterixQuery(keyword, mode){
+						// 빈칸 필수
+						// ; 찍었다가 get의 파라미터 상에서 오류가나서.. 근데 post로 보내면 상관 없을 듯!
+						if (mode == "search"){
 							query = encodeURI(
 								"use dataverse twitter " + 
 								"for $t in dataset ds_tweets " +
@@ -88,13 +115,13 @@
 							proxy = "http://stdio.kr:3000/welcome/index?query=";
 
 							$.ajax({
-                dataType: 'json',
-                url: proxy + query,
+								dataType: 'json',
+								url: proxy + query,
 								beforeSend: function(){
 									//https://answers.squarespace.com/questions/139989/loading-gif-for-individual-images.html
 									$('#queryStatus').html("<center><img src='https://d13yacurqjgara.cloudfront.net/users/82092/screenshots/1073359/spinner.gif'></center>")	
 								},
-                success: function(data){
+								success: function(data){
 									texts = "" 
 									locs = []  // locations
 									$.each(data, function(idx, obj){
@@ -127,39 +154,124 @@
 										circles.push(cityCircle)
 									}
 
-                }
-              })
+								}
+							})
 						}
+						// trajectory
+						// trajectory
+						else if (mode == "trajectory"){
+							query = encodeURI(
+								"use dataverse twitter " + 
+								"for $t in dataset ds_tweets " + 
+									"where contains($t.text_msg, '" + keyword + "' ) " +
+									"group by $d := print-datetime($t.create_at, 'MM-DD') with $t " +
+									"order by $d " + 
+								"return { " +
+									"'date': $d, "+
+									"'city': for $tt in dataset ds_tweets " +
+										"where print-datetime($tt.create_at, 'MM-DD') = $d and contains($tt.text_msg, '"+ keyword +"' ) " +
+										"group by $s := $tt.place.full_name with $tt " +
+										"let $c := count($tt) " +
+										"order by $c desc " +
+										"limit 1 " +
+										"return { " +
+										"'place': $tt[0].place, " +
+										"'text_msg': $tt[0].text_msg " +
+										"} " +
+								"}; " 
+								)
 
+							// CORS 문제 때문에 proxy서버를 이용해야됨
+							// http://adrenal.tistory.com/16
+							proxy = "http://stdio.kr:3000/welcome/index?query=";
 
-						// search nav item
-						// search nav item
-           $('#search').click(function(){
-              $('#overlay').css('width', $(window).width())
-                       .css('height', $(window).height())
-                       .show()
-              $('#overlay').click(function(){
-                 $(this).hide()
-              })
-              $('#search_input').focus()
-           })
+							$.ajax({
+								dataType: 'json',
+								url: proxy + query,
+								beforeSend: function(){
+									//https://answers.squarespace.com/questions/139989/loading-gif-for-individual-images.html
+									$('#queryStatus').html("<center><img src='https://d13yacurqjgara.cloudfront.net/users/82092/screenshots/1073359/spinner.gif'></center>")	
+								},
+								success: function(data){
+									texts = "" 
+									locs = []  // locations
+									$.each(data, function(idx, obj){
+										_lat = (obj["city"][0]["place"]["bounding_box"][0][1] + obj["city"][0]["place"]["bounding_box"][1][1])/2
+										_lng= (obj["city"][0]["place"]["bounding_box"][0][0] + obj["city"][0]["place"]["bounding_box"][1][0])/2
+										texts += "<h5>" + (obj["city"][0]["text_msg"]) + "</h5>"
+										locs.push({lat: parseFloat(_lat), lng: parseFloat(_lng)})
+									})
+									alert(locs)
+									$('#queryStatus').html("")
+									$('#queryResult').html(texts)
 
-					// search input event
-					// search input event
-           $('#search_input').css('margin-top', $(window).height()/3).click(function(){
-              return false;
+									var lineSymbol = {
+										path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+									};
+									
+									if (traj_line){
+										traj_line.setMap(null);
+									}
 
-           }).keyup(function(e){
-							if (e.keyCode == 13) {
-								asterixQuery($('#search_input').val());
-								$('#overlay').hide();
-								$('#queryResult').html("")
-							} 
-					 })
+									// Create the polyline and add the symbol via the 'icons' property.
+									traj_line = new google.maps.Polyline({
+										path: locs,
+										icons: [{
+											icon: lineSymbol,
+											offset: '100%'
+										}],
+										strokeColor: 'green',
+										map: map
+									});
+								}	
+								//success
+								//success
+							})
+							//ajax
+							//ajax
+						}
+						// trajectory
+						// trajectory
+					}
+					// query make & send 
+					// query make & send 
 
-						
+					function showBG(){
+             $('#overlay').css('width', $(window).width())
+               .css('height', $(window).height())
+               .show()
+					}
+
+					$('#overlay').click(function(){
+						$(this).hide()
+					})
+					
+					// search 버튼 눌렀을 때
+          $('#search').click(function(){
+						showBG();
+					  $('#search_input').focus()
+						mode = "search"
+          })
+					
+					// trajectory 버튼 눌렀을 때
+          $('#trajectory').click(function(){
+						showBG();
+					  $('#search_input').focus()
+						mode = "trajectory"
+          })
+
+          $('#search_input').css('margin-top', $(window).height()/3).click(function(){
+             return false;
+
+          }).keyup(function(e){
+						if (e.keyCode == 13) {
+							asterixQuery($('#search_input').val(), mode);
+							$('#overlay').hide();
+							$('#queryResult').html("")
+						} 
+				 })
         
-        })
+       })
     </script>
   </head>
 
@@ -181,9 +293,9 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#" id="search" >Search</a></li>
-            <li><a href="#" id="search" >Event</a></li>
-            <li><a href="#" id="search" >Sentiment</a></li>
-            <li><a href="#" id="search" >Trajectory</a></li>
+            <li><a href="#" id="event" >Event</a></li>
+            <li><a href="#" id="sentiment" >Sentiment</a></li>
+            <li><a href="#" id="trajectory" >Trajectory</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
@@ -203,9 +315,6 @@
 		<div id="queryStatus"></div>
 		<div id="queryResult"></div>
 
-    <script>
-				
-    </script>
 
     <div id="overlay">
       <center><input id="search_input" type="text" placeholder="Search..."></center>

@@ -44,8 +44,11 @@
 	}
 
 	#info {
-		font-size: 1.5em;	
+		font-size: 1.3em;	
 		color : #99E000;
+		cursor: pointer;
+	}
+	#intro{
 		cursor: pointer;
 	}
 
@@ -68,14 +71,14 @@
 		<div class="container" >
 			<%# ca = ['#EDD200', 'green', 'navy', 'purple'] %>
 			<%# ca[rand(0..4)]%>
-			<span id="title" style="font-weight:bold;font-size:3.5em;">Polatics</span>
-			<i id="info" class="fa fa-leaf" aria-hidden="true"></i>
+			<a href="/"><span id="title" style="font-weight:bold;font-size:3.5em;">Polatics</span></a>
 			<br>
 			<span style="font-size:1.2em;" ><strong>진보, 보수</strong> 신문기사에 대한 제목 검색이 가능합니다</span>
 			<br>
 			<span style="color:rgb(150,150,150)">- <span style="color:black"><%=time_ago_in_words(HotTopic.last.created_at)%></span> 전에 업데이트 됨 -</span>
 			<br>
-			<a  href="/news">전체보기</a>
+			<a id="intro" >소개말</a>
+			<i id="info" class="fa fa-leaf" aria-hidden="true"></i>
 
 			<div style="margin-top: 30px"></div>
 
@@ -107,6 +110,13 @@
 		<% if @lefts.length == 0 %>
 			- 진보 신문의 검색 결과가 없습니다 -
 		<% end %>
+		<div id="infinite-scrolling" style="display:none">
+			<% if @lefts.count < @rights.count %>
+				<%= will_paginate @lefts %>
+			<% else %>
+				<%= will_paginate @rights %>
+			<% end %>
+		</div>
 		<% @lefts.each do |news| %>	
 			<div class="news-container">
 				<span class="title"><%= link_to news.title.html_safe, news.news_url, target: "_blank" %></span>
@@ -115,6 +125,8 @@
 				<br>
 			</div>
 		<% end %>
+		<div id="extra-lefts">
+		</div>
 	</div>
 
 	<div style="width:50%; float:left">
@@ -129,9 +141,28 @@
 				<br>
 			</div>
 		<% end %>
+		<div id="extra-rights">
+		</div>
 	</div>
 
 </div>
+<script>
+	var canAddExtra = true
+	$(function(){
+		if ($('#infinite-scrolling').size() > 0){
+			$(window).on("scroll", function(){
+				more_posts_url = $('.pagination a.next_page').attr('href') 
+				if (canAddExtra && more_posts_url && $(window).scrollTop() > $(document).height() - $(window).height() - 60){
+					canAddExtra = false;
+					$.getScript(more_posts_url,function(data, textStatus, jqxhr){
+						console.log(data)
+						canAddExtra = true
+					})	
+				}
+			})
+		}
+	})
+</script>
 
 <div id="overlay">
 	<div id="about-service">
@@ -197,7 +228,7 @@
 
 		// search nav item
 		// search nav item
-		$('#info, #title').click(function(){
+		$('#info, #intro').click(function(){
 			$('#overlay').css('width', $(window).width())
 							 .css('height', $(window).height())
 							 .show()

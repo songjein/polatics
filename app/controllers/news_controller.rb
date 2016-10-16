@@ -8,9 +8,16 @@ class NewsController < ApplicationController
 		@lefts = New.where(polarity: true)
 			.where("news.title LIKE ?", "%#{@search_term}%")
 			.order(news_time: :desc)
+			.paginate(page: params[:page], per_page: 20)
 		@rights = New.where(polarity: false)
 			.where("news.title LIKE ?", "%#{@search_term}%")
 			.order(news_time: :desc)
+			.paginate(page: params[:page], per_page: 20)
+
+		respond_to do |format|
+			format.html
+			format.js
+		end
 	end
 
 	def all 

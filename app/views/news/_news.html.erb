@@ -1,0 +1,8 @@
+<% news.each do |new| %>
+	<div class="news-container">
+		<span class="title"><%= link_to new.title.html_safe, new.news_url, target: "_blank" %></span>
+		<span class="newsname">@<%= new.news_name%></span>
+		<span class="datetime"><%=time_ago_in_words(new.news_time)%> 전</span>
+		<br>
+	</div>
+<% end %>

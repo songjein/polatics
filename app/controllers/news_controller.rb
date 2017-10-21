@@ -59,6 +59,7 @@ class NewsController < ApplicationController
 		c = 0
 		ret = ""
 		(1..10).each do |i|
+			sleep 5 
 			doc = Nokogiri::HTML(open(base_url + "/svc/list_in/list.html?catid=2&pn=" + i.to_s, 'r:binary').read.encode('utf-8', 'euc-kr'))
 			links = doc.search(".list_item dt a")
 
@@ -98,6 +99,7 @@ class NewsController < ApplicationController
 		c = 0
 		ret = ""
 		(1..10).each do |i|
+			sleep 5 
 			doc = Nokogiri::HTML(open(base_url + "/arti/politics/list" + i.to_s +  ".html"))
 
 			links = doc.search(".article-title a")
@@ -139,6 +141,7 @@ class NewsController < ApplicationController
 		c = 0
 		ret = ""
 		(1..10).each do |i|
+			sleep 5 
 			doc = Nokogiri::HTML(open(base_url + "/politics/assemgov/list/" + i.to_s))
 
 			links = doc.search(".headline.mg a")
@@ -180,6 +183,7 @@ class NewsController < ApplicationController
 		c = 0
 		ret = ""
 		(1..10).each do |i|
+			sleep 5 
 			doc = Nokogiri::HTML(open(base_url + "/news/section_list_all.html?sec_no=66&page=" + i.to_s))
 
 			links = doc.search("a.tt")
@@ -222,6 +226,7 @@ class NewsController < ApplicationController
 		donga_i = 1
 		ret = ""
 		(1..10).each do |i|
+			sleep 5 
 			if i != 1
 				# 동아일보가 독특한 규칙을 가지고 있음, 한페이지마다 16씩 증가
 				donga_i +=  16 

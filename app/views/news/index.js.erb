@@ -1,6 +1,17 @@
 $('#extra-lefts').append('<%= j render 'news', news: @lefts%>');
 $('#extra-rights').append('<%= j render 'news', news: @rights%>');
 
+<%# search term highlight %>
+search_term = $("#search_form").val()
+$(".title").each(function(index){
+	$(this).html(
+			$(this).html()
+			.replace(search_term, "<span class='selected'>" + search_term +"</span>")
+	)
+})
+
+
+
 <% if @lefts.next_page %>
 	<%# 이건 둘중 하나로 할까 남은거로 %>
   $('.pagination').replaceWith('<%= j will_paginate @lefts%>');

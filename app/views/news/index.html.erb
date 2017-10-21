@@ -75,7 +75,9 @@
 			<br>
 			<span style="font-size:1.2em;" ><strong>진보, 보수</strong> 신문기사에 대한 제목 검색이 가능합니다</span>
 			<br>
-			<span style="color:rgb(150,150,150)">- <span style="color:black"><%=time_ago_in_words(HotTopic.last.created_at)%></span> 전에 업데이트 됨 -</span>
+			<% if HotTopic.last %>
+				<span style="color:rgb(150,150,150)">- <span style="color:black"><%=time_ago_in_words(HotTopic.last.created_at)%></span> 전에 업데이트 됨 -</span>
+			<% end %>
 			<br>
 			<a id="intro" >소개말</a>
 			<i id="info" class="fa fa-leaf" aria-hidden="true"></i>

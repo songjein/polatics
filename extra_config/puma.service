@@ -1,0 +1,46 @@
+# ref. https://github.com/puma/puma/blob/master/docs/systemd.md
+
+[Unit]
+#Description=Puma HTTP Server Accept Sockets
+Description=Puma HTTP Server
+After=network.target
+
+# Uncomment for socket activation (see below)
+#Requires=puma.socket
+
+#[Socket]
+#ListenStream=/home/ubuntu/polatics/shared/sockets/puma.sock
+
+# Socket options matching Puma defaults
+#NoDelay=true
+#ReusePort=true
+#Backlog=1024
+
+[Service]
+# Foreground process (do not use --daemon in ExecStart or config.rb)
+Type=simple
+
+# Preferably configure a non-privileged user
+User=ubuntu
+
+# Specify the path to your puma polaticslication root
+WorkingDirectory=/home/ubuntu/polatics
+
+# Helpful for debugging socket activation, etc.
+# Environment=PUMA_DEBUG=1
+# EnvironmentFile=/home/ubuntuer/polatics/.env
+
+# The command to start Puma
+# ExecStart=<WD>/sbin/puma -b tcp://0.0.0.0:9292 -b ssl://0.0.0.0:9293?key=key.pem&cert=cert.pem
+# ExecStart=/usr/local/bin/bundle exec --keep-file-descriptors puma -e production
+#ExecStart=/home/ubuntu/.rbenv/shims/puma -C /home/ubuntu/polatics/config/puma.rb
+#ExecStart=/home/ubuntu/.rbenv/bin/rbenv exec bundle exec puma -C /home/ubuntu/polatics/shared/config/puma.rb
+
+ExecStart=/home/ubuntu/.rbenv/bin/rbenv exec bundle exec puma -C /home/ubuntu/polatics/config/puma-original.rb /home/ubuntu/polatics/config.ru
+
+#Restart=always
+
+[Install]
+WantedBy=multi-user.target
+#WantedBy=sockets.target
+

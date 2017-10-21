@@ -31,6 +31,8 @@ gem 'jbuilder', '~> 2.5'
 # paginate
 gem 'will_paginate', '~> 3.1.0'
 
+# env
+gem 'dotenv-rails'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

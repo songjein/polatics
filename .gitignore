@@ -20,3 +20,7 @@
 
 # Ignore Byebug command history file.
 .byebug_history
+
+.env
+/sbin/*
+/shared/*

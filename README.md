@@ -1,24 +1,6 @@
-# README
+# Polatics (Politic + Polarity)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+폴라틱스는 Polatic과 Polarity의 합성어 입니다.
 
-Things you may want to cover:
+진보수 인터넷 신문 기사의 제목을 비교 검색할 수 있습니다.
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...

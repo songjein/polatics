@@ -1,5 +1,5 @@
 class NewsController < ApplicationController
-	skip_before_action :verify_authenticity_token, only: [:create]
+	skip_before_action :verify_authenticity_token, only: [:create, :add_comatrix]
 	def index
 		# 좌/ 우파 신문
 		@search_term = ""
@@ -39,6 +39,18 @@ class NewsController < ApplicationController
 			t.save	
 		end
 		render text: hot_topics 
+	end
+
+	def add_comatrix
+		comatrix = Comatrix.new
+		comatrix.matrix = params[:matrix]
+		comatrix.save
+		render text: "ok" 
+	end
+
+	def get_comatrix
+		@comatrix = JSON.parse(Comatrix.last.matrix)
+		render json: @comatrix
 	end
 
 	# api for adding news

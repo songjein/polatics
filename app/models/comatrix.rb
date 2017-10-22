@@ -1,0 +1,2 @@
+class Comatrix < ApplicationRecord
+end

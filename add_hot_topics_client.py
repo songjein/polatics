@@ -14,16 +14,10 @@ from konlpy.tag import Twitter
 
 twitter = Twitter()
 
-urllib2.urlopen("http://polatics.news:3000/crawl_chosun").read()
-urllib2.urlopen("http://polatics.news:3000/crawl_hani").read()
-urllib2.urlopen("http://polatics.news:3000/crawl_jungang").read()
-urllib2.urlopen("http://polatics.news:3000/crawl_pressian").read()
-urllib2.urlopen("http://polatics.news:3000/crawl_donga").read()
-
 #f = open("seoul_data2.txt", "r")
 #f = open("polatics.txt", "r")
 # current 500 articles
-f = urllib2.urlopen("http://polatics.news:3000/all").read().split('\n')
+f = urllib2.urlopen("http://polatics.news/all").read().split('\n')
 f.reverse()
 f = f[0:400]
 
@@ -58,5 +52,5 @@ for k,v in voca:
 hot_topics = ",".join(ret)
 
 
-print urllib2.urlopen("http://polatics.news:3000/add_hot_topics?hot=" + hot_topics).read()
+print urllib2.urlopen("http://polatics.news/add_hot_topics?hot=" + hot_topics).read()
 

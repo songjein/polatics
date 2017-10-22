@@ -58,7 +58,7 @@ class NewsController < ApplicationController
 		
 		c = 0
 		ret = ""
-		(1..10).each do |i|
+		(1..100).each do |i|
 			sleep 5 
 			doc = Nokogiri::HTML(open(base_url + "/svc/list_in/list.html?catid=2&pn=" + i.to_s, 'r:binary').read.encode('utf-8', 'euc-kr'))
 			links = doc.search(".list_item dt a")
@@ -98,7 +98,7 @@ class NewsController < ApplicationController
 
 		c = 0
 		ret = ""
-		(1..10).each do |i|
+		(1..100).each do |i|
 			sleep 5 
 			doc = Nokogiri::HTML(open(base_url + "/arti/politics/list" + i.to_s +  ".html"))
 
@@ -140,7 +140,7 @@ class NewsController < ApplicationController
 
 		c = 0
 		ret = ""
-		(1..10).each do |i|
+		(1..100).each do |i|
 			sleep 5 
 			doc = Nokogiri::HTML(open(base_url + "/politics/assemgov/list/" + i.to_s))
 
@@ -182,7 +182,7 @@ class NewsController < ApplicationController
 
 		c = 0
 		ret = ""
-		(1..10).each do |i|
+		(1..100).each do |i|
 			sleep 5 
 			doc = Nokogiri::HTML(open(base_url + "/news/section_list_all.html?sec_no=66&page=" + i.to_s))
 

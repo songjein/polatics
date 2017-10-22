@@ -10,8 +10,17 @@ default: &default
   timeout: 5000
 
 development:
-  <<: *default
-  database: db/development.sqlite3
+  #<<: *default
+  #database: db/development.sqlite3
+  adapter: mysql2
+  encoding: utf8
+  database: polatics 
+  username: polatics_user
+  password: <%= ENV["DB_PW"] %>
+  host: polatics-db-instance.cjj4xzpikmys.ap-northeast-2.rds.amazonaws.com
+  port: 3306
+  timeout: 5000
+
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -21,5 +30,12 @@ test:
   database: db/test.sqlite3
 
 production:
-  <<: *default
-  database: db/production.sqlite3
+  adapter: mysql2
+  encoding: utf8
+  database: polatics 
+  username: polatics_user
+  password: <%= ENV["DB_PW"] %>
+  host: polatics-db-instance.cjj4xzpikmys.ap-northeast-2.rds.amazonaws.com
+  port: 3306
+  timeout: 5000
+

@@ -34,6 +34,9 @@ gem 'will_paginate', '~> 3.1.0'
 # env
 gem 'dotenv-rails'
 
+# mysql
+gem 'mysql2'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 

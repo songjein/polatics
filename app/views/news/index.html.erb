@@ -61,7 +61,10 @@
 		background: rgba(0,0,0,0.3);
 		padding: 1%;
 	}
-
+	
+	#comatrix-graph{
+		background: rgba(240,240,240,0.6)
+	}
 
 </style>
 
@@ -100,16 +103,19 @@
 				<% end %>
 			</div>
 
-			<div id="comatrix-graph">
-			</div>
 
 		</div>
 	</center>
 </div>
 
 
-
 <div class="container">
+	<center id="comatrix-graph-container">
+		<h2>관계분석 결과</h2>
+		<div id="comatrix-graph">
+		</div>
+		<div style="height: 20px"></div>
+	</center>
 	
 	<div style="width:50%; float:left">
 		<% if @lefts.length == 0 %>
@@ -246,6 +252,8 @@
 			return false;	
 		})
 
+		$("#comatrix-graph-container").hide();
+
 		var comatrix ;
 		$.ajax('/get_comatrix', {
 			success: function(data){
@@ -254,28 +262,34 @@
 				////////////////////////////////////////////////////////////////////////////////////////////
 				// co matrix => graph
 				////////////////////////////////////////////////////////////////////////////////////////////
-				var w = 500;
-				var h = 500;
-				var linkDistance=200;
+				var w = 800;
+				var h = 400;
+				var linkDistance=150;
 
 				var colors = d3.scale.category10();
 
-				function makeDataset(topic){
+				function makeDataset(topics){
 					console.log(comatrix.edges);	
 					console.log(comatrix.nodes);	
 					// 토픽의 인덱스 찾기
-					topic_idx = comatrix.nodes.findIndex(function(e){
-						return e.name == topic;	
-					});
+					var topics_idx = []
+					for (i = 0 ; i < topics.length; i ++){
+						topic_idx = comatrix.nodes.findIndex(function(e){
+							return e.name == topics[i];	
+						});
+						topics_idx.push(topic_idx);
+					}
+	
 					// edges를 살펴서 source가 박근혜인걸 찾는다
 					var tmp = {
 						nodes: [],
 						edges: []
 					}
 					// 내가 원하는 것만 그리기 위해선 인덱스 재할당 필요
-					var nodes_idx = [topic_idx];
+					var nodes_idx = topics_idx.slice(); 
 					for (i = 0 ; i < comatrix.edges.length; i++){
-						if (comatrix.edges[i].source == topic_idx){
+						//if (comatrix.edges[i].source == topic_idx){
+						if (topics_idx.indexOf(comatrix.edges[i].source) > -1){
 							// 일단 edges를 tmp에 저장(뒤에서 인덱스 재할당)
 							tmp.edges.push(comatrix.edges[i]);
 							// 인덱스 재할당을 위해 nodes_idx에 원래 인덱스 저장
@@ -310,8 +324,30 @@
 					console.log(tmp);
 					return tmp;
 				}
+
 				var search_term = $("#search_form").val()
-				var dataset = makeDataset(search_term);
+
+				var dataset;
+				// 검색어 있을 때
+				if (search_term){
+					dataset = makeDataset([search_term]);
+					$("#comatrix-graph-container").fadeIn(500);
+				}
+				// 검색어 없을 때
+				else {
+					/*
+					var terms = []	
+					$(".hot-topic").each(function(idx){
+						terms.push($(".hot-topic").eq(idx).text());
+					});	
+					search_terms = terms.slice(0,3);
+					*/
+					search_term = {
+						nodes: [],
+						edges: []
+					}
+					dataset = makeDataset(search_term);
+				}
 
 				/*
 				// example dataset

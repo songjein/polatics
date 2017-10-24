@@ -264,7 +264,7 @@
 				////////////////////////////////////////////////////////////////////////////////////////////
 				var w = 800;
 				var h = 400;
-				var linkDistance=150;
+				var linkDistance=130;
 
 				var colors = d3.scale.category10();
 
@@ -343,32 +343,12 @@
 					search_terms = terms.slice(0,3);
 					*/
 					search_term = {
-						nodes: [],
-						edges: []
+						nodes: [], // {name: "abc"}
+						edges: []  // {source: 0, target: 1}
 					}
 					dataset = makeDataset(search_term);
 				}
 
-				/*
-				// example dataset
-				var dataset = {
-					nodes: [
-						{name: "Adam"},
-						{name: "Bob"},
-						{name: "Carrie"},
-						{name: "Donovan"},
-						{name: "Edward"},
-					],
-					edges: [
-						{source: 0, target: 1},
-						{source: 0, target: 2},
-						{source: 0, target: 3},
-						{source: 0, target: 4},
-					]
-				};
-				*/
-
-		 
 				var svg = d3.select("#comatrix-graph").append("svg").attr({"width":w,"height":h});
 
 				var force = d3.layout.force()
@@ -437,7 +417,7 @@
 				edgelabels.append('textPath')
 						.attr('xlink:href',function(d,i) {return '#edgepath'+i})
 						.style("pointer-events", "none")
-						.text(function(d,i){return 'label '+i});
+						//.text(function(d,i){return 'label '+i});
 
 
 				svg.append('defs').append('marker')

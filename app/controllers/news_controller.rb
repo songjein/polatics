@@ -60,9 +60,9 @@ class NewsController < ApplicationController
 			c = 0
 			results = JSON.parse params["news"]
 			results.each do |paper|
-				#if New.where(title: paper["title"]).length == 1
-				#	break;
-				#end
+				if New.where(title: paper["title"]).length > 1
+					break;
+				end
 				news= New.new
 				news.title = paper["title"] 
 				news.news_url = paper["news_url"]
@@ -72,9 +72,9 @@ class NewsController < ApplicationController
 				news.save
 				c += 1
 			end
-			render json: { result: c.to_s + " 개 삽입 @ " + Time.now.strftime("%I:%M:%S %z") }
+			render json: { result: c.to_s + " 개 삽입 @ " }
 		elsif 
-			render json: { Auth: false, Result: params[:auth] + " / " + ENV["AUTH"] } 
+			render json: { Auth: false } 
 		end
 	end
 

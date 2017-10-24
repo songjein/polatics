@@ -54,9 +54,9 @@ def crawl_chosun
 	puts res.body
 end
 
-# 한겨례 크롤러
+# 한겨레 크롤러
 def crawl_hani
-	newsName = "한거례"
+	newsName = "한겨레"
 	polarity = true 
 	base_url  = "http://www.hani.co.kr"
 

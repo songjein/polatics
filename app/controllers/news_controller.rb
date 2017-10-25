@@ -60,7 +60,7 @@ class NewsController < ApplicationController
 			c = 0
 			results = JSON.parse params["news"]
 			results.each do |paper|
-				if New.where(title: paper["title"]).length > 1
+				if New.where(title: paper["title"]).length > 0 
 					break;
 				end
 				news= New.new

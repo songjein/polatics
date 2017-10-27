@@ -22,7 +22,7 @@ vocaAll = allTitle.split()
 print (len(vocaAll))
 
 # 길이 1 이하인 것을 제외만 해도, 상당한 노이즈를 제거할 수 있다
-vocaAll = [v for v in vocaAll if len(v) > 1]
+vocaAll = [v.strip() for v in vocaAll if len(v) > 1]
 
 # result ; list of tuple
 # 모든 애들에 대해서 할필요가 전혀 없다.
@@ -51,9 +51,10 @@ for k in vocabulary:
 	for t in allTitle.split('\n'):
 		# 해당 키워드가 제목에 들어있다면
 		if k in t:
-			relatedTerms[k] += [word for word in t.split() if len(word) > 1 and (word in vocabulary)]
+			relatedTerms[k] += [word for word in t.split() if len(word) > 1 and (word in vocabulary) and word.strip() != k]
 	# top 5 for each
 	# 자기 자신은 제외시키기 +1 개 가져온 후 [1:]
+	# 버그 : 이렇게해도 똑같은게 추가되는 경우가 있음
 	relatedTerms[k] = collections.Counter(relatedTerms[k]).most_common(5 + 1)[1:]
 	for i in relatedTerms[k]:
 		results["edges"].append({"source": reverse_index[k], "target": reverse_index[i[0]]})
@@ -80,4 +81,3 @@ print (res)
 	http://bl.ocks.org/jhb/5955887
 	로 그리기
 """
-

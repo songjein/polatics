@@ -31,7 +31,9 @@
 	}
 
 	#twitters{
+		display: none;
 		width: 500px;
+		height: 80px;
 		font-size: 0.9em;
 		cursor: pointer;
 	}
@@ -73,6 +75,10 @@
 	
 	#comatrix-graph{
 		background: rgba(240,240,240,0.6)
+	}
+
+	.jumbotron{
+		margin-bottom: 15px !important;	
 	}
 
 </style>
@@ -119,20 +125,17 @@
 
 <div class="container">
 
-	<center>
-		<div id="twitters">
-			<span style="color:rgb(200,200,200)">클릭으로 멈출 수 있습니다:)</span>
-			<br>
-			<span id="tweet"></span>
-		</div>
-		<div style="margin-top: 15px"></div>
-	</center>
-
 	<center id="comatrix-graph-container">
 		<h2>관계분석 결과</h2>
 		<div id="comatrix-graph">
 		</div>
 		<div style="height: 20px"></div>
+	</center>
+
+	<center>
+		<div id="twitters">
+			<span id="tweet"></span>
+		</div>
 	</center>
 	
 	<div style="width:50%; float:left">
@@ -282,12 +285,13 @@
 			success: function(data){
 				var tweet_idx = 0;
 				var interval_id = localStorage.getItem("interval_id")
-				console.log("interval id", interval_id);
 				clearInterval(interval_id);
 				interval_id = setInterval(function(){
 					if (!isClickedTweet) {
 						$("#tweet").html("<b>[<span style='color:red'>" + data[tweet_idx].topic + "</span>]</b> " + data[tweet_idx].text + "<br><b>-" + data[tweet_idx].name + "-</b>");
-						tweet_idx++;
+						$('#twitters').fadeIn();
+						if (tweet_idx + 1 < data.length)
+							tweet_idx++;
 					}
 				}, 3000)
 				localStorage.setItem("interval_id", interval_id);

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171022143623) do
+ActiveRecord::Schema.define(version: 20171029125804) do
 
   create_table "comatrices", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.text     "matrix",     limit: 65535
@@ -33,6 +33,17 @@ ActiveRecord::Schema.define(version: 20171022143623) do
     t.boolean  "polarity"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
+  end
+
+  create_table "twitters", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "text"
+    t.string   "name"
+    t.string   "screen_name"
+    t.datetime "time"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.string   "topic"
+    t.index ["topic"], name: "index_twitters_on_topic", using: :btree
   end
 
 end

@@ -14,6 +14,10 @@ Rails.application.routes.draw do
 	get '/add_hot_topics' => 'news#add_hot_topics'
 	post '/add_comatrix' => 'news#add_comatrix'
 	get '/get_comatrix' => 'news#get_comatrix'
+	get '/get_hot_topics' => 'news#get_hot_topics'
+	post '/add_twitter' => 'news#add_twitter'
+
+	get '/get_twitter/:topic' => 'news#get_twitter'
 
 	resources :articles
 

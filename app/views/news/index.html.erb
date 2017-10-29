@@ -211,7 +211,6 @@
 
 
 <script>
-	var isSetIntervalApplied = false;
 	$(function(){
 		// 나중에 하이라이트 펑션에 쓸 함수
 		$("#").click(function(){
@@ -282,15 +281,16 @@
 		$.ajax('/get_twitter/' + topic, {
 			success: function(data){
 				var tweet_idx = 0;
-				if (!isSetIntervalApplied){
-					isSetIntervalApplied = true; // 여러번 등록 방지
-					setInterval(function(){
-						if (!isClickedTweet) {
-							$("#tweet").html("<b>[<span style='color:red'>" + data[tweet_idx].topic + "</span>]</b> " + data[tweet_idx].text + "<br><b>-" + data[tweet_idx].name + "-</b>");
-							tweet_idx++;
-						}
-					}, 3000)
-				}
+				var interval_id = localStorage.getItem("interval_id")
+				console.log("interval id", interval_id);
+				clearInterval(interval_id);
+				interval_id = setInterval(function(){
+					if (!isClickedTweet) {
+						$("#tweet").html("<b>[<span style='color:red'>" + data[tweet_idx].topic + "</span>]</b> " + data[tweet_idx].text + "<br><b>-" + data[tweet_idx].name + "-</b>");
+						tweet_idx++;
+					}
+				}, 3000)
+				localStorage.setItem("interval_id", interval_id);
 			}
 		});
 		// twitter end

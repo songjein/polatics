@@ -113,8 +113,10 @@
 
 			<div id="hot-topics">
 				핫토픽:
-				<% HotTopic.all.reverse[0..19].reverse.each do |h| %>
-					<span class="hot-topic"><%= h.topic%></span>&nbsp;
+				<% cache "hot-topics", expires_in: 1.hour do %>
+					<% HotTopic.all.reverse[0..19].reverse.each do |h| %>
+						<span class="hot-topic"><%= h.topic%></span>&nbsp;
+					<% end %>
 				<% end %>
 			</div>
 
@@ -139,9 +141,10 @@
 	</center>
 	
 	<div style="width:50%; float:left">
-		<% if @lefts.length == 0 %>
+		<% if @lefts and @lefts.length == 0 %>
 			- 진보 신문의 검색 결과가 없습니다 -
 		<% end %>
+		<% if @lefts %>
 		<div id="infinite-scrolling" style="display:none">
 			<% if @lefts.count < @rights.count %>
 				<%= will_paginate @lefts %>
@@ -159,12 +162,14 @@
 		<% end %>
 		<div id="extra-lefts">
 		</div>
+		<% end %>
 	</div>
 
 	<div style="width:50%; float:left">
-		<% if @rights.length == 0 %>
+		<% if @rights and @rights.length == 0 %>
 			- 보수 신문의 검색 결과가 없습니다 -
 		<% end %>
+		<% if @rights %>
 		<% @rights.each do |news| %>	
 			<div class="news-container">
 				<span class="title"><%= link_to news.title.html_safe, news.news_url, target: "_blank" %></span>
@@ -175,6 +180,7 @@
 		<% end %>
 		<div id="extra-rights">
 		</div>
+		<% end %>
 	</div>
 
 </div>

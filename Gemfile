@@ -43,6 +43,10 @@ gem 'mysql2'
  #https://github.com/svenfuchs/rails-i18n
  gem 'rails-i18n', github: 'svenfuchs/rails-i18n', branch: 'master' # For 5.x
 
+# caching
+gem 'actionpack-page_caching' 
+gem 'actionpack-action_caching'
+
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

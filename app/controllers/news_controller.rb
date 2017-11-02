@@ -1,12 +1,15 @@
 class NewsController < ApplicationController 
 	skip_before_action :verify_authenticity_token, only: [:create, :add_comatrix, :add_twitter]
 
+	caches_page :get_comatrix
+
 	def index
 		# 좌/ 우파 신문
 		@search_term = ""
 		if params
 			@search_term = params["search_term"]
 		end
+		'''
 		@lefts = New.where(polarity: true)
 			.where("news.title LIKE ?", "%#{@search_term}%")
 			.order(news_time: :desc)
@@ -15,10 +18,33 @@ class NewsController < ApplicationController
 			.where("news.title LIKE ?", "%#{@search_term}%")
 			.order(news_time: :desc)
 			.paginate(page: params[:page], per_page: 20)
+		'''
+		@lefts = get_lefts(@search_term, params[:page])
+		@rights = get_rights(@search_term, params[:page])
 
 		respond_to do |format|
 			format.html
 			format.js
+		end
+	end
+
+	def get_lefts(search_term, page)
+		cache_key = "get-lefts-#{search_term}-#{page}"
+		Rails.cache.fetch(cache_key, expires_in: 3.hours) do
+			New.where(polarity: true)
+			.where("news.title LIKE ?", "%#{@search_term}%")
+			.order(news_time: :desc)
+			.paginate(page: params[:page], per_page: 20)
+		end
+	end
+
+	def get_rights(search_term, page)
+		cache_key = "get-lefts-#{search_term}-#{page}"
+		Rails.cache.fetch(cache_key, expires_in: 3.hours) do
+			New.where(polarity: false)
+			.where("news.title LIKE ?", "%#{@search_term}%")
+			.order(news_time: :desc)
+			.paginate(page: params[:page], per_page: 20)
 		end
 	end
 
@@ -58,6 +84,7 @@ class NewsController < ApplicationController
 		twitters = JSON.parse(params[:twitter])
 
 		# 만개의 트윗만 남긴다
+		'''
 		allTweets = Twitter.all
 		len = allTweets.length
 		maxLen = 10000
@@ -67,22 +94,14 @@ class NewsController < ApplicationController
 			end
 			len -= 1
 		end
-			
+		'''
+		Twitter.delete_all
 		buf = []
 		twitters.each do |tweet|
 			tweet["topic"].each do |topic|
 				begin 
 					#buf << {topic: topic, text: strip_emoji(tweet["text"]), name: strip_emoji(tweet["name"]), screen_name: strip_emoji(tweet["screen_name"]), time: tweet["created_at"]}
 					buf << {topic: topic, text: strip_emoji(tweet["text"]), name: strip_emoji(tweet["screen_name"]), screen_name: strip_emoji(tweet["screen_name"]), time: tweet["created_at"]}
-					'''
-					t = Twitter.new
-					t.topic = topic
-					t.text = tweet["text"]
-					t.name = tweet["name"]
-					t.screen_name = tweet["screen_name"]
-					t.time = tweet["created_at"]
-					t.save
-					'''
 				rescue => ex
 					logger.error ex.message
 				end
@@ -139,15 +158,6 @@ class NewsController < ApplicationController
 					break;
 				end
 				buf << {title: paper["title"], news_url: paper["news_url"], news_name: paper["news_name"], news_time: paper["news_time"], polarity: paper["polarity"]}
-				'''
-				news= New.new
-				news.title = paper["title"] 
-				news.news_url = paper["news_url"]
-				news.news_name = paper["news_name"]
-				news.news_time = paper["news_time"]
-				news.polarity = paper["polarity"]
-				news.save
-				'''
 				c += 1
 			end
 			New.create(buf)

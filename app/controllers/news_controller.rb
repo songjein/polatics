@@ -1,5 +1,6 @@
-class NewsController < ApplicationController
+class NewsController < ApplicationController 
 	skip_before_action :verify_authenticity_token, only: [:create, :add_comatrix, :add_twitter]
+
 	def index
 		# 좌/ 우파 신문
 		@search_term = ""
@@ -55,9 +56,25 @@ class NewsController < ApplicationController
 
 	def add_twitter
 		twitters = JSON.parse(params[:twitter])
+
+		# 만개의 트윗만 남긴다
+		allTweets = Twitter.all
+		len = allTweets.length
+		maxLen = 10000
+		allTweets.each do |t|
+			if len > 10000
+				t.destroy
+			end
+			len -= 1
+		end
+			
+		buf = []
 		twitters.each do |tweet|
 			tweet["topic"].each do |topic|
 				begin 
+					#buf << {topic: topic, text: strip_emoji(tweet["text"]), name: strip_emoji(tweet["name"]), screen_name: strip_emoji(tweet["screen_name"]), time: tweet["created_at"]}
+					buf << {topic: topic, text: strip_emoji(tweet["text"]), name: strip_emoji(tweet["screen_name"]), screen_name: strip_emoji(tweet["screen_name"]), time: tweet["created_at"]}
+					'''
 					t = Twitter.new
 					t.topic = topic
 					t.text = tweet["text"]
@@ -65,19 +82,42 @@ class NewsController < ApplicationController
 					t.screen_name = tweet["screen_name"]
 					t.time = tweet["created_at"]
 					t.save
+					'''
 				rescue => ex
 					logger.error ex.message
 				end
 			end
+			Twitter.create(buf)
 		end
 		render json: Twitter.all 
 	end
 
+	def strip_emoji(text)
+    text = text.force_encoding('utf-8').encode
+    clean = ""
+
+    # symbols & pics
+    regex = /[\u{1f300}-\u{1f5ff}]/
+    clean = text.gsub regex, ""
+
+    # enclosed chars 
+    regex = /[\u{2500}-\u{2BEF}]/ # I changed this to exclude chinese char
+    clean = clean.gsub regex, ""
+
+    # emoticons
+    regex = /[\u{1f600}-\u{1f64f}]/
+    clean = clean.gsub regex, ""
+
+    #dingbats
+    regex = /[\u{2702}-\u{27b0}]/
+    clean = clean.gsub regex, ""
+  end
+
 	def get_twitter
 		if params[:topic] == "ALLTOPIC"
-			twitters = Twitter.all.reverse[0..100].shuffle
+			twitters = Twitter.all.reverse[0..150].shuffle
 		else
-			twitters = Twitter.where(topic: params[:topic]).shuffle
+			twitters = Twitter.where(topic: params[:topic]).reverse[0..150].shuffle
 		end
 		render json: twitters
 	end
@@ -93,10 +133,13 @@ class NewsController < ApplicationController
 		if auth == ENV["AUTH"]
 			c = 0
 			results = JSON.parse params["news"]
+			buf = []
 			results.each do |paper|
 				if New.where(title: paper["title"]).length > 0 
 					break;
 				end
+				buf << {title: paper["title"], news_url: paper["news_url"], news_name: paper["news_name"], news_time: paper["news_time"], polarity: paper["polarity"]}
+				'''
 				news= New.new
 				news.title = paper["title"] 
 				news.news_url = paper["news_url"]
@@ -104,8 +147,10 @@ class NewsController < ApplicationController
 				news.news_time = paper["news_time"]
 				news.polarity = paper["polarity"]
 				news.save
+				'''
 				c += 1
 			end
+			New.create(buf)
 			render json: { result: c.to_s + " 개 삽입 @ " }
 		elsif 
 			render json: { Auth: false } 

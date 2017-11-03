@@ -34,17 +34,17 @@ class NewsController < ApplicationController
 			New.where(polarity: true)
 			.where("news.title LIKE ?", "%#{@search_term}%")
 			.order(news_time: :desc)
-			.paginate(page: params[:page], per_page: 20)
+			.paginate(page: params[:page], per_page: 30)
 		end
 	end
 
 	def get_rights(search_term, page)
-		cache_key = "get-lefts-#{search_term}-#{page}"
+		cache_key = "get-rights-#{search_term}-#{page}"
 		Rails.cache.fetch(cache_key, expires_in: 3.hours) do
 			New.where(polarity: false)
 			.where("news.title LIKE ?", "%#{@search_term}%")
 			.order(news_time: :desc)
-			.paginate(page: params[:page], per_page: 20)
+			.paginate(page: params[:page], per_page: 30)
 		end
 	end
 

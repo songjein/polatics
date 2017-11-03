@@ -24,3 +24,5 @@
 .env
 /sbin/*
 /shared/*
+
+/public/deploy/*

@@ -1,4 +1,4 @@
-# Polatics (Politic + Polarity)
+# Polatics (Politics + Polarity)
 
 폴라틱스는 Politics과 Polarity의 합성어 입니다.
 
